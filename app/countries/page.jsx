@@ -61,7 +61,7 @@ export default async function CountryPage() {
                   {country.attributes.stores.data.map(store => {
                     return (
                       <div className="p-2 my-3 border-2 rounded-lg bg-slate-800 border-slate-600 hover:border-slate-400" key={store.id}>
-                      <a className="w-auto h-auto" href={store.attributes.link}>
+                      <a className="w-full h-full" href={store.attributes.link}>
                       <img 
                 src={`${apiUrl}${
                   store.attributes.brand.data.attributes.logo.data.attributes.url}`}
