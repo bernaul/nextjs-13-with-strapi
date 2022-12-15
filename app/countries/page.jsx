@@ -7,6 +7,12 @@ async function getProductData() {
   return res.json();
 }
 
+async function getWebsiteData() {
+  const url = `${apiUrl}/api/website?populate=*`
+  const res = await fetch(url);
+  return res.json();
+}
+
 async function getCountriesData() {
   const url = `${apiUrl}/api/countries?populate=flag&populate=stores.brand.logo`
   const res = await fetch(url);
@@ -16,15 +22,27 @@ async function getCountriesData() {
 export default async function CountryPage() {
 
   const productResponse = await getProductData();
-  
   let product 
   if (productResponse?.data?.attributes) {
     product  = productResponse?.data?.attributes
   }
-  
   let imageProduct
-  if (productResponse?.data?.attributes?.image?.data[0]?.attributes) {
-    imageProduct = productResponse?.data?.attributes.image.data[0].attributes
+  if (product?.image?.data[0]?.attributes) {
+    imageProduct = product?.image.data[0].attributes
+  }
+
+  const websiteResponse = await getWebsiteData();
+  let website 
+  if (websiteResponse?.data?.attributes) {
+    website  = websiteResponse?.data?.attributes
+  }
+  let backgroundColor
+  if (website?.backgroundColor) {
+    backgroundColor = website?.backgroundColor
+  }
+  let fontColor
+  if (website?.backgroundColor) {
+    fontColor = website?.fontColor
   }
   
   const countriesResponse = await getCountriesData();
@@ -35,7 +53,12 @@ export default async function CountryPage() {
 
   return (
   
-  <div className="flex flex-1 flex-col p-6 justify-between bg-slate-900 text-white"> 
+    <div
+      className="flex flex-1 flex-col p-6 justify-between bg-slate-900 text-white"
+      style={{
+          backgroundColor: backgroundColor,
+          color: fontColor
+        }}> 
     <div className="w-full h-full max-w-full lg:max-w-2xl mx-auto">
 
       {imageProduct ?
@@ -69,15 +92,14 @@ export default async function CountryPage() {
             }
             
             return (
-              <div className="p-5" key={country.id}>
+              <div className="p-4" key={country.id}>
               <div className="flex">
                   <img 
-                  className="mr-2"
+                  className="mr-3 lg:mr-2 w-10 lg:w-8"
                   src={`${apiUrl}${countryFlag.url}`}
                   alt={`${countryAttribute.name}`} 
-                  width={'30'} 
                 />
-                <h2 className="text-4xl lg:text-lg font-bold">
+                <h2 className="text-5xl lg:text-lg font-bold">
                   {countryAttribute.name}
                 </h2>
                 </div>
@@ -95,12 +117,20 @@ export default async function CountryPage() {
                       }
 
                       return (
-                          <a
-                            key={`store${store.id}`}
-                              className="w-full lg:w-1/2 pr-4 lg:pr-2 pb-4 lg:pb-2"
-                             href={store.attributes.link}
-                           >
-                              <div className="h-32 lg:h-16 p-5 lg:p-2.5 border-2 flex justify-center items-center rounded-lg bg-slate-800 border-slate-600 hover:border-slate-400">
+                        <div
+                          key={`store${store.id}`}
+                          className="
+                              w-full lg:w-1/2 
+                              pr-0 lg:pr-4 pb-8 lg:pb-4"
+                        >
+                          <a href={store.attributes.link}>
+                          <div className="
+                              h-32 lg:h-16 
+                              p-5 lg:p-2.5 
+                              flex justify-center items-center
+                              border-2 rounded-lg
+                              bg-slate-800 border-slate-600 hover:border-slate-400
+                              hover:scale-105 ease-out duration-75 shadow-md">
                                 {brandLogo ? 
                                 <img
                                 src={`${apiUrl}${brandLogo.url}`}
@@ -115,7 +145,8 @@ export default async function CountryPage() {
                               {brand.name}</h2>
                               }
                              </div>
-                              </a>
+                          </a>
+                          </div>
                       )
                     }
                     )}
