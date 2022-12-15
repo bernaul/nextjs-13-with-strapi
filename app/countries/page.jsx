@@ -1,22 +1,21 @@
+import ky from 'ky'
 
-const apiUrl = process.env.STRAPI_BASE_URL || "http://127.0.0.1:1337"
+const prefixUrl = process.env.STRAPI_BASE_URL || "http://127.0.0.1:1337" 
+const apiUrl = prefixUrl + '/api'
 
 async function getProductData() {
-  const url = `${apiUrl}/api/product?populate=*`
-  const res = await fetch(url);
-  return res.json();
+  const response = await ky.get('product?populate=*', { prefixUrl: apiUrl});
+  return response.json();
 }
 
 async function getWebsiteData() {
-  const url = `${apiUrl}/api/website?populate=*`
-  const res = await fetch(url);
-  return res.json();
+  const response = await ky.get('website?populate=*', { prefixUrl: apiUrl });
+  return response.json();
 }
 
 async function getCountriesData() {
-  const url = `${apiUrl}/api/countries?populate=flag&populate=stores.brand.logo`
-  const res = await fetch(url);
-  return res.json();
+  const response = await ky.get('countries?populate=flag&populate=stores.brand.logo', { prefixUrl: apiUrl });
+  return response.json();
 }
 
 export default async function CountryPage() {
@@ -59,20 +58,20 @@ export default async function CountryPage() {
           backgroundColor: backgroundColor,
           color: fontColor
         }}> 
-    <div className="w-full h-full max-w-full lg:max-w-2xl mx-auto">
+    <div className="w-full h-full max-w-full lg:max-w-4xl mx-auto">
 
       {imageProduct ?
         <div className="flex items-center flex-col w-full">
           <img 
-            src={`${apiUrl}${imageProduct.url}`}
+            src={`${prefixUrl}${imageProduct.url}`}
               alt={`${product.name}`} 
-              className="h-auto lg:h-96"
+              className="h-96"
             // width={`${imageProduct.width}`} 
             // height={`${imageProduct.height}`} 
             />
-            <div className="pt-10 lg:pt-6 text-center">
-              <h1 className="text-5xl lg:text-2xl">{product.name}</h1>
-              <h4 className="text-4xl lg:text-base pt-4 lg:pt-2">{product.description}</h4>
+            <div className="pt-10 md:pt-8 lg:pt-6 text-center">
+              <h1 className="text-4xl md:text-3xl lg:text-2xl">{product.name}</h1>
+              <h4 className="text-3xl md:text-2xl lg:text-xl pt-4 md:pt-3 lg:pt-2">{product.description}</h4>
             </div>
         </div>
         : null
@@ -95,16 +94,16 @@ export default async function CountryPage() {
               <div className="p-4" key={country.id}>
               <div className="flex">
                   <img 
-                  className="mr-3 lg:mr-2 w-10 lg:w-8"
-                  src={`${apiUrl}${countryFlag.url}`}
+                  className="mr-3 md:mr-3 lg:mr-2 w-10 md:w-9 lg:w-8"
+                  src={`${prefixUrl}${countryFlag.url}`}
                   alt={`${countryAttribute.name}`} 
                 />
-                <h2 className="text-5xl lg:text-lg font-bold">
+                <h2 className="text-3xl md:text-xl lg:text-lg font-bold">
                   {countryAttribute.name}
                 </h2>
                 </div>
                 {countryStores ?
-                  <div className="flex flex-wrap items-stretch pt-8 lg:pt-4">
+                  <div className="flex flex-wrap items-stretch pt-8 md:pt-6 lg:pt-4">
                     {countryStores.map(store => {
 
                       let brand
@@ -125,7 +124,7 @@ export default async function CountryPage() {
                         >
                           <a href={store.attributes.link}>
                           <div className="
-                              h-32 lg:h-16 
+                              h-24 lg:h-16 
                               p-5 lg:p-2.5 
                               flex justify-center items-center
                               border-2 rounded-lg
@@ -133,7 +132,7 @@ export default async function CountryPage() {
                               hover:scale-105 ease-out duration-75 shadow-md">
                                 {brandLogo ? 
                                 <img
-                                src={`${apiUrl}${brandLogo.url}`}
+                                src={`${prefixUrl}${brandLogo.url}`}
                                 alt={`${brand.name}`}
                                 style={{
                                   maxWidth:"100%",
